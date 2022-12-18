@@ -58,7 +58,7 @@ module.exports = {
       skipDryRun: true
     },
     // gonet : {
-    //   provider: () => new HDWalletProvider(mnemonic, "https://goerli.infura.io/v3/5c70ec60e6d546778a52b11f5d18dc0c"),
+    //   provider: () => new HDWalletProvider(mnemonic, "https://goerli.infura.io/v3/process.env["MNEMONIC"]"),
     //   network_id : 5777
     // }
 
