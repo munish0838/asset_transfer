@@ -23,7 +23,6 @@
 // const infuraProjectId = process.env["INFURA_PROJECT_ID"];
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const mnemonic = "situate flight furnace object alcohol talk decrease bird steak few home student"
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
