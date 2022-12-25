@@ -1,7 +1,6 @@
 pragma solidity ^0.6.12;
     // SPDX-License-Identifier: UNLICENSED
     //import "./Asset_transfer.sol";
-
     // File: @openzeppelin/contracts/token/ERC20/IERC20.sol
     /**
     * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -96,7 +95,6 @@ library SafeMath {
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
         require(c >= a, "SafeMath: addition overflow");
-
         return c;
     }
     /**
@@ -104,7 +102,6 @@ library SafeMath {
      * overflow (when the result is negative).
      *
      * Counterpart to Solidity's `-` operator.
-     *
      * Requirements:
      * - Subtraction cannot overflow.
      */
@@ -123,7 +120,6 @@ library SafeMath {
     function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
         require(b <= a, errorMessage);
         uint256 c = a - b;
-
         return c;
     }
     /**
@@ -176,7 +172,6 @@ library SafeMath {
         require(b > 0, errorMessage);
         uint256 c = a / b;
         // assert(a == b * c + a % b); // There is no case in which this doesn't hold
-
         return c;
     }
     /**
@@ -250,15 +245,14 @@ contract ERC20token is  IERC20 {
         uint8 private _decimals;
         bytes32 private mintsecret;     //secret for executing mint function
 
-   
     constructor (string memory name, string memory symbol,address creator, bytes32 secret) public {
         _name = name;
         _symbol = symbol;
         _decimals = 18;
         owner=creator;
         mintsecret=secret; 
-        _totalSupply = _totalSupply.add(2000);
-        _balances[owner] = _balances[owner].add(2000);
+        _totalSupply = _totalSupply.add(2000);           // set for testing purpose only
+        _balances[owner] = _balances[owner].add(2000);   //set for testing purpose only
     }
     /**
      * @dev Returns the name of the token.
@@ -499,11 +493,13 @@ contract ERC20token is  IERC20 {
 
 contract Asset_transfer {
 
+// ERC20token contract can be deployed separately and its address can be user here instead of creating new instance of ERC20token.
+
      ERC20token ec;
     constructor (string memory name, string memory symbol, bytes32 secret) public
      {
          ec=new ERC20token(name,symbol,msg.sender,secret);
-     }
+     }                                                 
 
     struct transaction {
         string BCName;               // Blockchain Name
@@ -519,7 +515,7 @@ contract Asset_transfer {
  
       uint currentTransactionId = 0;
       mapping(uint => transaction) public transactions;
-	  event fundsburned(uint _currentTransactionId);
+      event fundsburned(uint _currentTransactionId);
       event fundsminted(uint _currentTransactionId);
       event fundsrefunded(uint _currentTransactionId);
 
@@ -532,9 +528,10 @@ contract Asset_transfer {
          emit fundsburned(currentTransactionId);
          currentTransactionId++;   
     } 
-   function get_burn_txn_details(uint _transactionId) public view returns (address recipient, uint amount, bytes32 secretHash, bool burn_verified) {
-		 require(transactions[_transactionId].asset_owner == msg.sender || transactions[_transactionId].recipient == msg.sender,"You are not Authorized to get the Details !" );
-		 return(transactions[_transactionId].recipient, transactions[_transactionId].amounttransfered,transactions[_transactionId].secretHash, transactions[_transactionId].burn_verified);
+   function get_burn_txn_details(uint _transactionId) public view returns (address recipient, uint amount, bytes32 secretHash, bool burn_verified) 
+   {
+      require(transactions[_transactionId].asset_owner == msg.sender || transactions[_transactionId].recipient == msg.sender,"You are not Authorized to get the Details !" );
+      return(transactions[_transactionId].recipient, transactions[_transactionId].amounttransfered,transactions[_transactionId].secretHash, transactions[_transactionId].burn_verified);
     }
     
    function get_mint_txn_details(uint _transactionId) public view returns (bool)
@@ -551,6 +548,7 @@ contract Asset_transfer {
     {   
         //mintsecret is a hash secret set (in ERC20 token contarct while its deployment) and passed here by the front-end.
         // _transactionId is passed as an argumnet to keep the id in synchronization on both the blockchains. 
+	
         if (transactions[_transactionId].mint_verified == false) 
         {
             transactions[_transactionId]= transaction(_BCName, _transactionId, _amount, _sender, msg.sender, _secretHash, false, false, false);
